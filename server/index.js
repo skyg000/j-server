@@ -26,7 +26,7 @@ app.post('/insert', function (req, res) {
     res.send('완료');
 })
 
-app.listen(3000)
+app.listen(3030)
 
 
 /* 
