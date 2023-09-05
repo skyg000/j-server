@@ -7,23 +7,37 @@ app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
-
+const tData = {
+    select : function(){
+        return JSON.parse (fs.readFileSync('./test.json'))
+    },
+    insert : function(nObj){
+        const jsonD = tData.select()
+        const newData = [...jsonD, {id:jsonD.length+1, ...nObj}]
+        fs.writeFileSync('./test.json',JSON.stringify(newData))
+        return newData;
+    },
+    update : function(){},
+    delete : function(){}
+}
 app.get('/abc', function (req, res) { 
-    const jsonD = fs.readFileSync('./test.json')
-    res.send(JSON.parse(jsonD))
+   /*  const jsonD = fs.readFileSync('./test.json') */
+    res.send(tData.select())
 })
 
-app.get('/abc/:id', function (req, res) { 
-    const jsonD = fs.readFileSync('./test.json')
-    const data = JSON.parse(jsonD)
+app.delete('/abc/:id', function (req, res) { 
+    const jsonD = tData.select();
     const {id} = req.params
-    const aaa = data.filter(n=>n.id == id)
-    res.send(aaa)
+    const del = jsonD.filter(n=>n.id != id)
+    fs.writeFileSync('./test.json',JSON.stringify(del))
+    res.send(del)
 })
 
 app.post('/insert', function (req, res) { 
-    fs.writeFileSync('./test.json',JSON.stringify(req.body))
-    res.send('완료');
+   /*  const jsonD = JSON.parse(fs.readFileSync('./test.json'))
+    let data1 = [...jsonD, {id:jsonD.length+1, ...req.body}]
+    fs.writeFileSync('./test.json',JSON.stringify(data1)) */
+    res.send(tData.insert(req.body));
 })
 
 app.listen(3030)
